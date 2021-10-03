@@ -1,0 +1,23 @@
+#
+# The filename `.binder.yaml` is required at the root of a Blockdown Binder, and
+# must have the version specified.
+#
+binder:
+  version: ^2.0.1
+
+#
+# If your binder imports data, you will need to specify the handlers. The map is
+# a key to a module+configuration object.
+#
+import_handlers:
+  csv:
+    # You can import from npm directly, if possible.
+    npm: papaparse@^5.3.1
+    # If needed, here is where you would specify configuration parameters to the
+    # import handler.
+    config:
+      foo: bar
+  tsv:
+    # You can also reference JavaScript files directly, but the path has the same
+    # restrictions and interpretation as the import path restrictions.
+    file: /_binder/tsv.js

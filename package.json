@@ -1,0 +1,28 @@
+{
+  "name": "blockdown-binder",
+  "version": "1.0.0",
+  "description": "Your own collection of Blockdown documents, some private, some public.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saibotsivad/blockdown-binder.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saibotsivad/blockdown-binder/issues"
+  },
+  "homepage": "https://github.com/saibotsivad/blockdown-binder#readme",
+  "dependencies": {
+    "@saibotsivad/blockdown": "^2.0.1",
+    "esm": "^3.2.25",
+    "glob": "^7.1.6",
+    "js-yaml": "^3.14.0",
+    "pointer-props": "^1.0.1"
+  }
+}
