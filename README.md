@@ -247,54 +247,107 @@ title: Template Two
 ---[[example#numbertwo|title: Example Title]]
 ```
 
-The total object structure that the `example` plugin would be called with would be:
+The total object structure that the `example` plugin would be called with would be the following, noting the `$` key:
 
 ```json
 {
 	"index": 1,
-	"id": "numbertwo"
+	"id": "numbertwo",
+	"metadata": {
+		"title": "Example Title"
+	},
+	"blocks": [
+		{
+			"name": "frontmatter",
+			"metadata": {
+				"title": "Template Two"
+			}
+		},
+		{
+			"name": "example",
+			"metadata": {
+				"title": "Example Title"
+			}
+		}
+	],
+	"$": {
+		"index": 1,
+		"metadata": {
+			"title": "Template One Alternate Title"
+		},
+		"blocks": [
+			{
+				"name": "frontmatter",
+				"metadata": {
+					"title": "Template One"
+				}
+			},
+			{
+				"name": "template",
+				"id": "/template2.md",
+				"metadata": {
+					"title": "Template One Alternate Title"
+				}
+			}
+		],
+		"$": {
+			"index": 1,
+			"metadata": {
+				"title": "Alternate Title"
+			},
+			"blocks": [
+				{
+					"name": "frontmatter",
+					"metadata": {
+						"title": "Template Example"
+					}
+				},
+				{
+					"name": "template",
+					"id": "/template1.md",
+					"metadata": {
+						"title": "Alternate Title"
+					}
+				}
+			]
+		}
+	}
 }
-
-index: 1
-id: numbertwo
-metadata:
-  title: Example Title
-blocks:
-  - name: frontmatter
-    metadata:
-      title: Template Two
-  - name: example
-    id: numbertwo
-    metadata:
-      title: Example Title
-$:
-  index: 1
-  metadata:
-    title: Template One Alternate Title
-  blocks:
-    - name: frontmatter
-      metadata:
-        title: Template One
-    - name: template
-      id: /template2.md
-      metadata:
-        title: Template One Alternate Title
-  $:
-    meta
 ```
 
+If you imagine a Svelte plugin, instead of naming the block `example` suppose it was named `svelte` and then `template2.md` looked like this:
 
 ```markdown
-inline or block level is the same, but here is a block
+---
+title: Template Two
 
----[[template#PATH|PARAMS]]
+---[[svelte#numbertwo|title: Example Title]]
+
+<script>
+	export let metadata
+	export let $
+</script>
+
+<h1>
+	{metadata.title}
+	{#if $.metadata.title}
+		<small>
+			{$.metadata.title}
+		</small>
+	{/if}
+</h1>
 ```
 
-Note in this 
+When rendered to HTML, the `svelte` block would output:
 
-
-
-
+```html
+<h1>
+	Example Title
+	<small>
+		Template One Alternate Title
+	</small>
+</h1>
+```
 
 ## External Binders
 
