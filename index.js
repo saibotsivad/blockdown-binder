@@ -1,6 +1,4 @@
-import { join } from 'path'
-import { safeLoad } from 'js-yaml'
-import { openBinder } from './src/open-binder.js'
+import { listBinderFiles } from './src/read-binder.js'
 
 const IN_MEMORY_CACHE = {}
 const cache = {
@@ -14,24 +12,17 @@ const cache = {
 }
 
 const start = new Date().getTime()
-openBinder({
-	binderPath: join(__dirname, 'example'),
-	renderers: {
-		frontmatter: async ({ content }) => safeLoad(content),
-		md: async ({ content }) => {
-			return 'foo'
-		}
-	},
-	cache
-})
-	.then(binder => binder
-		.renderFile({
-			file: 'my cool company/engineering blog/how-stuff-works.md'
-		})
-	)
+const end = () => new Date().getTime() - start
+
+const work = async () => {
+	const files = await listBinderFiles('./example')
+	console.log(files)
+}
+
+work()
 	.then(() => {
-		console.log(` ----- Done in ${new Date().getTime() - start}ms -----`)
+		console.log('done', end())
 	})
 	.catch(error => {
-		console.error(error)
+		console.error('error', end(), error)
 	})
