@@ -231,7 +231,12 @@ const initializeRenderer = async (configuration, directory) => {
 	const cachedRenderers = {
 		html: async params => ({ rendered: HTML(params), extension: 'html' })
 	}
-	return async (format, metadata, { head, css, html }) => {
+	return async ({ format, metadata, parsed: { head, css, html } }) => {
+		if (!format) {
+			// TODO get from metadata I suppose? a plugin here probably?
+			// throw at the end if not? or warn and skip?
+		}
+
 		if (!cachedRenderers[format]) {
 			if (!configuration.exporters?.[format]?.file) throw new Error(`Encountered export of format "${format}" without corresponding exporter.`)
 			const { default: renderer } = await import(join(directory, BINDER_DIR, 'node_modules', BINDER_NPM_PREFIX, BINDER_PLUGINS_DIR, configuration.exporters[format].file))
@@ -243,6 +248,20 @@ const initializeRenderer = async (configuration, directory) => {
 		}
 		return cachedRenderers[format]({ metadata, head, css, html })
 	}
+}
+
+const exportSingleFile = async ({ configuration, parse, render, directory, blockdownFiles, file, format, output }) => {
+	const [ metadata, parsed ] = await parse(file, { directory, configuration, blockdownFiles })
+	const { rendered, extension } = await render({ format, metadata, parsed })
+
+	let filename = basename(file).split('.')
+	filename.pop()
+	filename = filename.join('') + '.' + extension
+
+	const fileDirectory = dirname(file)
+	const outputDirectory = join(resolve(output), fileDirectory)
+	await mkdir(outputDirectory, { recursive: true })
+	await writeFile(join(resolve(output), fileDirectory, filename), rendered, 'utf8')
 }
 
 // ======= here are what I propose are the main exported things
@@ -262,18 +281,9 @@ export const renderBlockdownFile = async (binderDirectory, file, output, format)
 	const absoluteBinderDirectory = resolve(binderDirectory)
 	const parse = initializeParser()
 	const { configuration, blockdownFiles } = await loadAndInitializeBinder(absoluteBinderDirectory)
-	const [ metadata, parsed ] = await parse(file, { directory: absoluteBinderDirectory, configuration, blockdownFiles })
 	const render = await initializeRenderer(configuration, absoluteBinderDirectory)
-	const { rendered, extension } = await render(format, metadata, parsed)
 
-	let filename = basename(file).split('.')
-	filename.pop()
-	filename = filename.join('') + '.' + extension
-
-	const fileDirectory = dirname(file)
-	const outputDirectory = join(resolve(output), fileDirectory)
-	await mkdir(outputDirectory, { recursive: true })
-	await writeFile(join(resolve(output), fileDirectory, filename), rendered, 'utf8')
+	await exportSingleFile({ configuration, parse, render, directory: absoluteBinderDirectory, blockdownFiles, file, format, output })
 }
 
 /**
@@ -286,4 +296,12 @@ export const renderBlockdownFile = async (binderDirectory, file, output, format)
  * @return {Promise<void>} - Returns when all files are rendered.
  */
 export const renderBlockdownFiles = async (binderDirectory, output, files) => {
+	const absoluteBinderDirectory = resolve(binderDirectory)
+	const parse = initializeParser()
+	const { configuration, blockdownFiles } = await loadAndInitializeBinder(absoluteBinderDirectory)
+	const render = await initializeRenderer(configuration, absoluteBinderDirectory)
+
+	for (const file of files) {
+		await exportSingleFile({ configuration, parse, render, directory: absoluteBinderDirectory, blockdownFiles, file, output })
+	}
 }
