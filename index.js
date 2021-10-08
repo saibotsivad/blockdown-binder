@@ -1,22 +1,10 @@
-import { listBinderFiles } from './src/read-binder.js'
+import { renderBlockdownFile } from './src/read-binder.js'
 
-const IN_MEMORY_CACHE = {}
-const cache = {
-	async get(filepath, property) {
-		return IN_MEMORY_CACHE[filepath] && IN_MEMORY_CACHE[filepath][property]
-	},
-	async put(filepath, property, data) {
-		IN_MEMORY_CACHE[filepath] = IN_MEMORY_CACHE[filepath] || {}
-		IN_MEMORY_CACHE[filepath][property] = data
-	}
-}
-
-const start = new Date().getTime()
-const end = () => new Date().getTime() - start
+const start = Date.now()
+const end = () => `${Math.round((Date.now() - start) / 1000) / 1000}s`
 
 const work = async () => {
-	const files = await listBinderFiles('./example')
-	console.log(files)
+	await renderBlockdownFile('./example', 'essays/tabs-vs-spaces.md', './example-output', 'html')
 }
 
 work()

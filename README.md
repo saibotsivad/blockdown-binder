@@ -53,16 +53,16 @@ fizz: buzz
 
 becomes `{ "foo": "bar", "fizz": "buzz" }` and so on.
 
-Additionally, the `$` character as a property name is reserved for the Blockdown Binder internals: you can't have metadata like this:
+Additionally, the `_` character as a property name is reserved for the Blockdown Binder internals: you can't have metadata like this:
 
 ```yaml
-$: foo
+_: foo
 # or
 foo:
-  $: bar
+  _: bar
 ```
 
-That is valid YAML, but the `$` is reserved for use by plugins and templates.
+That is valid YAML, but the `_` is reserved for use by plugins and templates.
 
 ## Extra Functionality
 
@@ -110,7 +110,7 @@ Although the Blockdown Binder spec does register some import handler *names* as 
 
 ### Document Self Reference
 
-Metadata in the document can reference data in the Blockdown's first YAML section (aka the Front Matter) using the syntax `$ref("POINTER")` where `POINTER` is the [JSON Pointer (RFC-6901)](https://datatracker.ietf.org/doc/html/rfc6901) to that property.
+Metadata in the document blocks can reference data in the Blockdown's first YAML section (aka the Front Matter) using the syntax `$ref("POINTER")` where `POINTER` is the [JSON Pointer (RFC-6901)](https://datatracker.ietf.org/doc/html/rfc6901) to that property.
 
 For example, given this Front Matter section:
 
@@ -214,14 +214,14 @@ Templates are normal Binder files. You don't need to denote the file itself at a
 
 ```
 
-When a template is called, the calling file's metadata (the Frontmatter), the parsed Blockdown sections, and the optional parameters, are all available on the reserved root parameter `$`.
+When a template is called, the calling file's metadata (the Frontmatter), the parsed Blockdown sections, and the optional parameters, are all available on the reserved root parameter `_`.
 
-* `$.metadata <Object>` *(optional)* - The metadata (Frontmatter) of the calling file.
-* `$.blocks <Array>` - The list of parsed, but not rendered, Blockdown blocks of the calling file.
-* `$.index <Number>` - The index of the `$.blocks` array for the specific template call.
-* `$.inlineIndex <Number>` *(optional)* - If called as a template within an inline section, this will be the index within that section.
+* `_.metadata <Object>` *(optional)* - The metadata (Frontmatter) of the calling file.
+* `_.blocks <Array>` - The list of parsed, but not rendered, Blockdown blocks of the calling file.
+* `_.index <Number>` - The index of the `_.blocks` array for the specific template call.
+* `_.inlineIndex <Number>` *(optional)* - If called as a template within an inline section, this will be the index within that section.
 
-If a template calls another template, the same thing will happen, meanining that you'll potentially end up with a chain of `$.$.$.$` that repeats for the depth of the template calling stack.
+If a template calls another template, the same thing will happen, meanining that you'll potentially end up with a chain of `_._._._` that repeats for the depth of the template calling stack.
 
 For example, suppose in our Blockdown file that we're rendering, we have Frontmatter and block metadata, like this:
 
@@ -247,7 +247,7 @@ title: Template Two
 ---[[example#numbertwo|title: Example Title]]
 ```
 
-The total object structure that the `example` plugin would be called with would be the following, noting the `$` key:
+The total object structure that the `example` plugin would be called with would be the following, noting the `_` key:
 
 ```json
 {
@@ -270,7 +270,7 @@ The total object structure that the `example` plugin would be called with would 
 			}
 		}
 	],
-	"$": {
+	"_": {
 		"index": 1,
 		"metadata": {
 			"title": "Template One Alternate Title"
@@ -290,7 +290,7 @@ The total object structure that the `example` plugin would be called with would 
 				}
 			}
 		],
-		"$": {
+		"_": {
 			"index": 1,
 			"metadata": {
 				"title": "Alternate Title"
@@ -325,12 +325,12 @@ title: Template Two
 
 <script>
 	export let metadata
-	export let $
+	export let _
 </script>
 
 <h1>
 	{metadata.title}
-	{#if $.metadata.title}
+	{#if _.metadata.title}
 		<small>
 			{$.metadata.title}
 		</small>

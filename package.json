@@ -1,28 +1,36 @@
 {
   "name": "blockdown-binder",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Your own collection of Blockdown documents, some private, some public.",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf example/.binder && rm -rf example-output",
+    "build": "npm run clean && NODE_PRESERVE_SYMLINKS=1 node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/saibotsivad/blockdown-binder.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "blockdown",
+    "blockdown binder",
+    "markdown"
+  ],
+  "author": "Tobias Davis <tobias@davistobias.com>",
+  "license": "VOL",
   "bugs": {
     "url": "https://github.com/saibotsivad/blockdown-binder/issues"
   },
   "homepage": "https://github.com/saibotsivad/blockdown-binder#readme",
   "dependencies": {
     "@saibotsivad/blockdown": "^2.0.1",
-    "esm": "^3.2.25",
-    "glob": "^7.1.6",
-    "js-yaml": "^3.14.0",
-    "pointer-props": "^1.0.1"
+    "dset": "^3.1.0",
+    "fs-symlink": "^1.2.1",
+    "js-yaml": "^4.1.0",
+    "ncp": "^2.0.0",
+    "pointer-props": "^1.0.1",
+    "tableize-object": "^0.1.0"
   }
 }

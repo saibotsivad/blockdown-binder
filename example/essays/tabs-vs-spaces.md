@@ -1,5 +1,8 @@
 ---
 title: Tabs vs Spaces
+foo:
+  bar: fizz
+  fizz: $import("./data.json" with 'json')
 ---
 
 The answer is to indent with tabs, and align with spaces.
@@ -24,6 +27,25 @@ If you want a fancier link, you could use an inline Binder template, which would
 
 This is an escaped inline template: \::link.md|foo.md|bar::
 
----!nunjucks
+---[[svelte|
+title: example
+name: $ref('/foo/fizz/hello')
+more: $import('./other-data.json' with 'json')
+]]
 
-This content is nunjucks 
+<svelte:head>
+	<link rel="stylesheet" href="tutorial/dark-theme.css">
+</svelte:head>
+
+<script>
+	export let _
+	export let metadata
+</script>
+
+<h1>The title for this is {metadata?.title}</h1>
+{#if _?.title}
+	<h2>{_?.title}</h2>
+{/if}
+
+<p>Hello {metadata.name}</p>
+<p>{metadata.more.text}</p>

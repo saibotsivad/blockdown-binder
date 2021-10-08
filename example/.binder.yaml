@@ -4,20 +4,48 @@
 #
 binder:
   version: ^2.0.1
+  # By default, the binder only looks for Markdown/Blockdown files to render content,
+  # but if you use a different extension you can configure it here.
+  extensions: [ md, bd ]
+  # If you have plugins available, set the plugin folder name here.
+  plugins: _plugins
+
+dependencies:
+  markdown-it: ^12.2.0
+  svelte: ^3.43.1
+
+#
+# These are the block-level parsers.
+# The file path is relative to the configured plugins path, e.g. if it's in `_plugins/markdown.js` it's just `markdown.js`
+#
+parsers:
+  frontmatter:
+    file: /parser/frontmatter.js
+  markdown:
+    file: /parser/markdown.js
+  svelte:
+    file: /parser/svelte.js
 
 #
 # If your binder imports data, you will need to specify the handlers. The map is
 # a key to a module+configuration object.
 #
-import_handlers:
+importers:
   csv:
     # You can import from npm directly, if possible.
-    npm: papaparse@^5.3.1
+    npm: [ papaparse, ^5.3.1 ]
     # If needed, here is where you would specify configuration parameters to the
     # import handler.
     config:
       foo: bar
-  tsv:
-    # You can also reference JavaScript files directly, but the path has the same
-    # restrictions and interpretation as the import path restrictions.
-    file: /_binder/tsv.js
+  json:
+    # You can also reference JavaScript files directly, but the file path is relative to the configured
+    # plugins path, and has the same restrictions and interpretation as the import path restrictions.
+    file: /importer/json.js
+
+#
+# TODO these output formats would probably be system wide, not binder specific? that would be my ideal plan, at least, I think????
+#
+exporters:
+  pdf:
+    file: /exporter/html.js
